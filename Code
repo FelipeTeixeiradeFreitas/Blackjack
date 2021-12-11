@@ -1,0 +1,111 @@
+import random
+#import pixiedust
+NAIPES = ['♥', '♣', '♦', '♠']
+POSTOS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'D', 'J', 'Q', 'K']
+VALOR = {'A': 14, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'D': 10,
+'J': 11, 'Q': 12, 'K': 13}
+# resultados de uma rodada
+SHELDON = 'S'
+LEONARD = 'L'
+EMPATE = 'E'
+# número de cartas e rodadas
+N_CARTAS = 52
+N_RODADAS = 26
+
+class Carta:
+    def __init__(self, naipe, posto):
+            self.naipe = naipe
+            self.posto = posto
+    def pegue_naipe(self):
+            return self.naipe
+    def pegue_posto(self):
+            return self.posto
+    def pegue_valor(self):
+            return VALOR[self.posto]
+           
+class Baralho:
+    
+    def __init__(self):
+        
+        
+# Adiciona todas as combinações de naipe e posto no baralho
+        self.baralho = []
+        for naipe in NAIPES:            
+            for posto in POSTOS:
+                carta = Carta(naipe,posto)
+                self.baralho.append(carta)
+    def embaralhe(self):
+# Utiliza a função fornecida para embaralhar as cartas
+        random.shuffle(self.baralho)
+    def pegue_carta(self):
+# pop() é um método da classe list que retorna o último elemento da lista e o remove dela
+        carta = self.baralho.pop()
+        return carta
+        
+        
+class Jogador:
+    
+    def __init__(self, nome):
+            self.nome = nome
+            self.monte = []
+    def __str__(self,carta):
+ # Monta uma string como especificado e a retorna
+            no_cartas = len(self.monte)
+            s = "%s: " %(self.nome)
+            for i in range(no_cartas-1,-1,-1):
+                carta = self.monte[i]
+                s += carta.pegue_naipe() + carta.pegue_posto() + ' '
+            return s
+    def recebe_carta(self,carta):
+            self.monte.append(carta)
+    def pegue_carta(self):
+            carta = self.monte.pop()
+            return carta
+            
+##%%pixie_debugger
+    
+print("War entre Sheldon e Leonard")
+ # Cria os jogadores da Classe 'Jogador', passando seus nomes para o construtor
+sheldon = Jogador("Sheldon")
+leonard = Jogador("Leonard")
+baralho = Baralho() # Cria o baralho
+baralho.embaralhe() # Embaralha as cartas do baralho
+ # Distribui as cartas para os jogadores
+for rodadas in range(N_RODADAS):
+    carta = baralho.pegue_carta()
+    sheldon.recebe_carta(carta)
+    carta = baralho.pegue_carta()
+    leonard.recebe_carta(carta)
+ # Imprime as cartas dos jogadores
+ # Aqui, o método __str__ da classe Jogador é usado automaticamente
+#print(sheldon)
+#print(leonard)
+
+ # Conta as cartas para determinar o vencedor
+cont_sheldon = 0 # contador de rodadas vencidas por sheldon
+cont_leonard = 0 # contador de rodadas vencidas por leonard
+vencedores = 'Venceu :' # String com os vencedores
+for rodada in range(N_RODADAS):
+ # Pega as cartas dos montes e os valores
+    carta_sheldon = sheldon.pegue_carta() # Pega a ultima carta
+    valor_sheldon = carta_sheldon.pegue_valor() # Pega o valor dessa carta
+    carta_leonard = leonard.pegue_carta()
+    valor_leonard = carta_leonard.pegue_valor()
+ # Verifica o vencedor
+    if valor_sheldon == valor_leonard:
+        vencedores += ' ' + EMPATE
+    elif valor_sheldon > valor_leonard:
+        vencedores += ' ' + SHELDON
+        cont_sheldon += 1
+    else:
+        vencedores += ' ' + LEONARD
+        cont_leonard += 1
+ # Imprime a string com os vencedores
+print(vencedores)
+ # Imprime a string indicando o vencedor
+if cont_sheldon == cont_leonard:
+    print("Sheldon e Leonard empataram a partida.")
+if cont_sheldon > cont_leonard:
+    print("Sheldon venceu a partida.")
+else: # cont_sheldon < cont_leonard:
+    print("Leonard venceu a partida.")
